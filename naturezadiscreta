@@ -1,0 +1,78 @@
+MAIN.PY
+def process_operations():
+    try:
+        with open('arquivo.txt', 'r') as file:
+            lines = file.readlines()
+
+        if not lines:
+            print("O arquivo está vazio.")
+            return
+
+        try:
+            num_operations = int(lines[0].strip())
+        except ValueError:
+            print("Número de operações inválido.")
+            return
+
+        current_line = 1
+
+        for _ in range(num_operations):
+            if current_line + 2 >= len(lines):
+                print("Número insuficiente de linhas para as operações.")
+                return
+
+            operation_type = lines[current_line].strip()
+            try:
+                set1 = set(lines[current_line + 1].strip().split(', '))
+                set2 = set(lines[current_line + 2].strip().split(', '))
+            except ValueError:
+                print("Erro ao analisar os conjuntos.")
+                return
+
+            if operation_type == 'U':
+                result = set1 | set2  # União
+                description = "União"
+            elif operation_type == 'I':
+                result = set1 & set2  # Interseção
+                description = "Interseção"
+            elif operation_type == 'D':
+                result = set1 - set2  # Diferença
+                description = "Diferença"
+            elif operation_type == 'C':
+                result = [(a, b) for a in set1 for b in set2]  # Produto cartesiano
+                description = "Produto cartesiano"
+            else:
+                print(f"Operação desconhecida: {operation_type}")
+                return
+
+            if operation_type == 'C' and len(result) > 10:
+                result_preview = list(result)[:10]  # Limitar a saída aos primeiros 10 pares
+                print(f"{description}: conjunto 1 {set1}, conjunto 2 {set2}. Resultado (primeiros 10): {result_preview}...")
+            else:
+                print(f"{description}: conjunto 1 {set1}, conjunto 2 {set2}. Resultado: {result}")
+
+            current_line += 3
+
+    except FileNotFoundError:
+        print("Arquivo não encontrado.")
+    except Exception as e:
+        print(f"Ocorreu um erro: {e}")
+
+if __name__ == "__main__":
+    process_operations()
+
+
+ARQUIVO.TXT
+4
+U
+3, 5, 67, 7
+1, 2, 3, 4
+I
+1, 2, 3, 4, 5
+4, 5
+D
+1, A, C, 34
+A, C, D, 23
+C
+3, 4, 5, 5, A, B, R
+1, B, C, D, 1
